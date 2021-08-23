@@ -28,7 +28,7 @@ class DepthAndStyleModelExecutor(
     private var useGPU: Boolean = true
 ) {
 
-    private var numberThreads = 8
+    private var numberThreads = 7
     private var fullExecutionTime = 0L
     private var preProcessTime = 0L
     private var findPotraitTime = 0L
@@ -40,7 +40,7 @@ class DepthAndStyleModelExecutor(
     companion object {
         private const val TAG = "PhotosWithDepthProcedure"
         private const val CONTENT_IMAGE_SIZE = 512
-        private const val DEPTH_MODEL = "portrait.tflite"
+        private const val DEPTH_MODEL = "portrait_dr_quant.tflite"
     }
 
     init {
