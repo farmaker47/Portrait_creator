@@ -31,10 +31,10 @@ class DepthAndStyleModelExecutor(
     private var numberThreads = 8
     private var fullExecutionTime = 0L
     private var preProcessTime = 0L
-    private var findDepthTime = 0L
+    private var findPotraitTime = 0L
     private var styleTransferTime = 0L
     private var postProcessTime = 0L
-    private var interpreterDepth: Interpreter
+    private var interpreterPortrait: Interpreter
     //private lateinit var gpuDelegate: GpuDelegate
 
     companion object {
@@ -45,7 +45,7 @@ class DepthAndStyleModelExecutor(
 
     init {
 
-        interpreterDepth = getInterpreter(context, DEPTH_MODEL, useGPU)
+        interpreterPortrait = getInterpreter(context, DEPTH_MODEL, useGPU)
 
     }
 
@@ -76,8 +76,9 @@ class DepthAndStyleModelExecutor(
             val inputStyle = ImageUtils.bitmapToFloatArray(loadedBitmap)
             //Log.i(TAG, inputStyle[0][0][0].contentToString())
 
+            // Use below if you like to proceed withrunForMultipleInputsOutputs
             // Create an output array with size 1,1,512,512
-            val output1 =
+            /*val output1 =
                 Array(1) { Array(1) { Array(CONTENT_IMAGE_SIZE) { FloatArray(CONTENT_IMAGE_SIZE) } } }
             val output2 =
                 Array(1) { Array(1) { Array(CONTENT_IMAGE_SIZE) { FloatArray(CONTENT_IMAGE_SIZE) } } }
@@ -105,21 +106,38 @@ class DepthAndStyleModelExecutor(
             Log.d(TAG, "Pre process time: $preProcessTime")
 
             // Runs model inference and gets result.
-            findDepthTime = SystemClock.uptimeMillis()
+            findPotraitTime = SystemClock.uptimeMillis()
             val array = arrayOf(inputStyle)
-            interpreterDepth.runForMultipleInputsOutputs(array, outputs)
+            interpreterPortrait.runForMultipleInputsOutputs(array, outputs)*/
 
+            // Use below with runSignature
+            preProcessTime = SystemClock.uptimeMillis() - preProcessTime
+            val signatures = interpreterPortrait.signatureDefNames
+            val output = Array(1) { Array(1) { Array(CONTENT_IMAGE_SIZE) { FloatArray(CONTENT_IMAGE_SIZE) } } }
+            // Values from python code interpreter.get_signatures_list()
+            // Python output = {'serving_default': {'inputs': ['input'], 'outputs': ['1884', '1885', '1886', '1887', '1888', '1889', 'output']}}
+            val inputs: MutableMap<String, Any> = HashMap()
+            inputs["input"] = inputStyle
+            val outputs: MutableMap<String, Any> = HashMap()
+            // We use the last array for output
+            outputs["output"] = output
 
+            findPotraitTime = SystemClock.uptimeMillis()
+            interpreterPortrait.runSignature(
+                inputs, outputs, signatures[0]
+            )
 
             //Log.d(TAG, "Output array: " + outputs[0][0][0].contentToString())
-            findDepthTime = SystemClock.uptimeMillis() - findDepthTime
-            Log.d(TAG, "Find depth time: $findDepthTime")
+            findPotraitTime = SystemClock.uptimeMillis() - findPotraitTime
+            Log.d(TAG, "Find depth time: $findPotraitTime")
 
             // Post process time
             postProcessTime = SystemClock.uptimeMillis()
+
             // Convert output array to Bitmap
+            // For code with runForMultipleInputsOutputs use output7 //////////
             val (finalBitmapGrey, finalBitmapBlack) = ImageUtils.convertArrayToBitmap(
-                output7, CONTENT_IMAGE_SIZE,
+                output, CONTENT_IMAGE_SIZE,
                 CONTENT_IMAGE_SIZE
             )
             postProcessTime = SystemClock.uptimeMillis() - postProcessTime
@@ -195,7 +213,7 @@ class DepthAndStyleModelExecutor(
         sb.append("GPU enabled: $useGPU\n")
         sb.append("Number of threads: $numberThreads\n")
         sb.append("Pre-process execution time: $preProcessTime ms\n")
-        sb.append("Predicting style execution time: $findDepthTime ms\n")
+        sb.append("Predicting style execution time: $findPotraitTime ms\n")
         sb.append("Transferring style execution time: $styleTransferTime ms\n")
         sb.append("Post-process execution time: $postProcessTime ms\n")
         sb.append("Full execution time: $fullExecutionTime ms\n")
@@ -203,6 +221,6 @@ class DepthAndStyleModelExecutor(
     }
 
     fun close() {
-        interpreterDepth.close()
+        interpreterPortrait.close()
     }
 }
