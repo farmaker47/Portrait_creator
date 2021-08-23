@@ -9,6 +9,6 @@
     <string name="koinStyle">koinStyle</string>
     <string name="choose_a_style" translatable="false">Choose a Style</string>
     <string name="aboutSyleTransfer">Style Transfer procedure</string>
-    <string name="rgb_d">RGB-D</string>
+    <string name="rgb_d">Portrait</string>
 
 </resources>
