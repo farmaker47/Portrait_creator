@@ -1,0 +1,2 @@
+rootProject.name='photos_with_depth'
+include ':app'
