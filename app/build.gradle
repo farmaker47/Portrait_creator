@@ -77,7 +77,8 @@ dependencies {
     // TensorFlow Lite dependencies
     //def tfl_version = "0.0.0-nightly"
     //implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0-rc2'
-    implementation "org.tensorflow:tensorflow-lite:2.5.0"
+    implementation "org.tensorflow:tensorflow-lite:2.7.0-rc0"
+    //implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly-SNAPSHOT'
     //implementation "org.tensorflow:tensorflow-lite-gpu:2.5.0"
     //implementation("org.tensorflow:tensorflow-lite:${tfl_version}") { changing = true }
     //implementation("org.tensorflow:tensorflow-lite-gpu:${tfl_version}") { changing = true }

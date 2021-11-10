@@ -112,7 +112,7 @@ class DepthAndStyleModelExecutor(
 
             // Use below with runSignature
             preProcessTime = SystemClock.uptimeMillis() - preProcessTime
-            val signatures = interpreterPortrait.signatureDefNames
+            val signatures = interpreterPortrait.signatureKeys
             val output = Array(1) { Array(1) { Array(CONTENT_IMAGE_SIZE) { FloatArray(CONTENT_IMAGE_SIZE) } } }
             // Values from python code interpreter.get_signatures_list()
             // Python output = {'serving_default': {'inputs': ['input'], 'outputs': ['1884', '1885', '1886', '1887', '1888', '1889', 'output']}}
